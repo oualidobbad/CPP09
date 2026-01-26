@@ -31,29 +31,41 @@ void BitcoinExchange::parseDB(std::ifstream& DB)
 static void isValidDate(std::string& line)
 {
 	std::map<int, std::string> mapDate;
-	std::string date = line.substr(0, line.find('|') - 1);
-	if (date.find(' ') != std::string::npos)
-		throw std::runtime_error("Error: extra space in date => " + date);
-	int indexOfMap = 0; // 2011-01-03
+	int indexOfMap = 0;
 	size_t pos = 0;
 	size_t index;
+	std::string date = line.substr(0, line.find('|') - 1);
+
+	if (date.find(' ') != std::string::npos)
+		throw std::runtime_error("Error: extra space in date => " + line);
 	while ((index = date.find('-', pos)) != std::string::npos)
 	{
 		mapDate[indexOfMap] = date.substr(pos, index - pos);
-		index++;
-		pos = index;
+		pos = ++index;
 		indexOfMap++;
 	}
 	mapDate[indexOfMap] = date.substr(pos);
 	if (indexOfMap != 2 || mapDate[indexOfMap].empty())
+		throw std::runtime_error("Error: bad input => " + line);
+	
+	long month =  std::strtol(mapDate[1].c_str(), NULL, 10);
+	long day =  std::strtol(mapDate[2].c_str(), NULL, 10);
+	errno = 0;
+	if (errno == ERANGE || month > 12 || day > 30)
 		throw std::runtime_error("Error: invalid date => " + date);
-	std::string year = mapDate[0];
-	std::string month = mapDate[1];
-	std::string day = mapDate[2];
-
-	std::cout << "[" + year + "] [" + month + "] [" + day + "]" << std::endl;
 
 }
+
+static void calculateCurrency(std::string& line, std::map<std::string, double>& dataBase)
+{
+	std::string date = line.substr(0, line.find('|') - 1);
+	std::string value = line.substr(line.find('|') + 2);
+
+	if (value.find(' ') != std::string::npos)
+		throw std::runtime_error("Error: extra space in value => " + line);
+	// std::cout << value << std::endl;
+}
+
 void BitcoinExchange::exchange(std::ifstream& input)
 {
 	std::string line;
@@ -71,6 +83,7 @@ void BitcoinExchange::exchange(std::ifstream& input)
 			if (std::isspace(line[0]) || std::isspace(line[line.size() - 1]))
 				throw std::runtime_error("Error: bad input (found space at first or end) => " + line);
 			isValidDate(line);
+			calculateCurrency(line, this->database);
 		}
 		catch(std::exception& e){
 			std::cerr << e.what() << std::endl;
