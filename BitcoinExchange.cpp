@@ -27,10 +27,33 @@ void BitcoinExchange::parseDB(std::ifstream& DB)
 		database[key] = std::strtod(value.c_str(), NULL);
 	}
 }
-// static void va(std::string& line)
-// {
 
-// }
+static void isValidDate(std::string& line)
+{
+	std::map<int, std::string> mapDate;
+	std::string date = line.substr(0, line.find('|') - 1);
+	if (date.find(' ') != std::string::npos)
+		throw std::runtime_error("Error: extra space in date => " + date);
+	int indexOfMap = 0; // 2011-01-03
+	size_t pos = 0;
+	size_t index;
+	while ((index = date.find('-', pos)) != std::string::npos)
+	{
+		mapDate[indexOfMap] = date.substr(pos, index - pos);
+		index++;
+		pos = index;
+		indexOfMap++;
+	}
+	mapDate[indexOfMap] = date.substr(pos);
+	if (indexOfMap != 2 || mapDate[indexOfMap].empty())
+		throw std::runtime_error("Error: invalid date => " + date);
+	std::string year = mapDate[0];
+	std::string month = mapDate[1];
+	std::string day = mapDate[2];
+
+	std::cout << "[" + year + "] [" + month + "] [" + day + "]" << std::endl;
+
+}
 void BitcoinExchange::exchange(std::ifstream& input)
 {
 	std::string line;
@@ -47,6 +70,7 @@ void BitcoinExchange::exchange(std::ifstream& input)
 				throw std::runtime_error("Error: bad input => " + line);
 			if (std::isspace(line[0]) || std::isspace(line[line.size() - 1]))
 				throw std::runtime_error("Error: bad input (found space at first or end) => " + line);
+			isValidDate(line);
 		}
 		catch(std::exception& e){
 			std::cerr << e.what() << std::endl;
