@@ -59,10 +59,19 @@ static void isValidDate(std::string& line)
 static void calculateCurrency(std::string& line, std::map<std::string, double>& dataBase)
 {
 	std::string date = line.substr(0, line.find('|') - 1);
-	std::string value = line.substr(line.find('|') + 2);
+	std::string valueStr = line.substr(line.find('|') + 2);
+	double value;
+	char *endConversion;
 
-	if (value.find(' ') != std::string::npos)
+	errno = 0;
+	if (valueStr.find(' ') != std::string::npos)
 		throw std::runtime_error("Error: extra space in value => " + line);
+	value = std::strtod(valueStr.c_str(), &endConversion);
+
+	if (errno == ERANGE || value > 1000 || value < 0)
+	{
+		
+	}
 	// std::cout << value << std::endl;
 }
 
