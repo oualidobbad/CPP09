@@ -7,6 +7,18 @@ BitcoinExchange::~BitcoinExchange()
 {
 }
 
+BitcoinExchange::BitcoinExchange(const BitcoinExchange& other): database(other.database)
+{
+}
+
+BitcoinExchange& BitcoinExchange::operator=(const BitcoinExchange& other)
+{
+    if (this != &other) {
+        database = other.database;
+    }
+    return *this;
+}
+
 static void extractKeyValue(std::string& str, std::string& value, std::string& key)
 {
 	size_t index_pip = str.find(',');
@@ -28,6 +40,17 @@ void BitcoinExchange::parseDB(std::ifstream& DB)
 	}
 }
 
+static long convertToNumber(const char* date, std::string& line)
+{
+	char *endConvertion;
+	long value = std::strtol(date, &endConvertion, 10);
+
+	errno = 0;
+	if (*endConvertion != '\0' || errno == ERANGE)
+		throw std::runtime_error("Error: bad input =>" + line);
+	return value;
+}
+
 static void isValidDate(std::string& line)
 {
 	std::map<int, std::string> mapDate;
@@ -37,7 +60,7 @@ static void isValidDate(std::string& line)
 	std::string date = line.substr(0, line.find('|') - 1);
 
 	if (date.find(' ') != std::string::npos)
-		throw std::runtime_error("Error: extra space in date => " + line);
+		throw std::runtime_error("Error: Invalid format. Expected format: [date␣|␣value] => " + line);
 	while ((index = date.find('-', pos)) != std::string::npos)
 	{
 		mapDate[indexOfMap] = date.substr(pos, index - pos);
@@ -48,32 +71,44 @@ static void isValidDate(std::string& line)
 	if (indexOfMap != 2 || mapDate[indexOfMap].empty())
 		throw std::runtime_error("Error: bad input => " + line);
 	
-	long month =  std::strtol(mapDate[1].c_str(), NULL, 10);
-	long day =  std::strtol(mapDate[2].c_str(), NULL, 10);
-	errno = 0;
-	if (errno == ERANGE || month > 12 || day > 30)
-		throw std::runtime_error("Error: invalid date => " + date);
-
+	int i = 0;
+	while (i <= indexOfMap)
+	{
+		long number = convertToNumber(mapDate[i].c_str(), line);
+		if (i == 1 && (number > 12 || number < 1))
+			throw std::runtime_error("Error: bad input => " + line);
+		if (i == 2 && (number > 30 || number < 1))
+			throw std::runtime_error("Error: bad input => " + line);
+		i++;
+	}
 }
 
 static void calculateCurrency(std::string& line, std::map<std::string, double>& dataBase)
 {
 	std::string date = line.substr(0, line.find('|') - 1);
-	std::string valueStr = line.substr(line.find('|') + 2);
+	std::string valueStr = line.substr(line.find('|') + 1);
+	std::map<std::string, double>::iterator it;
 	double value;
 	char *endConversion;
 
 	errno = 0;
+	if (valueStr[0] != ' ')
+		throw std::runtime_error("Error: Invalid format. Expected format: [date␣|␣value] => " + line);
+	valueStr = valueStr.substr(1);
 	if (valueStr.find(' ') != std::string::npos)
-		throw std::runtime_error("Error: extra space in value => " + line);
+		throw std::runtime_error("Error: Invalid format. Expected format: [date␣|␣value] => " + line);
 	value = std::strtod(valueStr.c_str(), &endConversion);
-
-	if (errno == ERANGE || value > 1000 || value < 0)
-	{
-		
-	}
-	// std::cout << value << std::endl;
+	if (*endConversion != '\0')
+		throw std::runtime_error("Error: value not pure number.");
+	if (value < 0 || (errno == ERANGE && valueStr[0] == '-'))
+		throw std::out_of_range("Error: not a positive number.");
+	if (errno == ERANGE || value > 1000)
+		throw std::out_of_range("Error: too large a number.");
+	it = dataBase.upper_bound(date);
+	it--;
+	std::cout << date + " => " + valueStr +" = " << it->second * value << std::endl;
 }
+
 
 void BitcoinExchange::exchange(std::ifstream& input)
 {
@@ -90,7 +125,7 @@ void BitcoinExchange::exchange(std::ifstream& input)
 			if (pos == std::string::npos)
 				throw std::runtime_error("Error: bad input => " + line);
 			if (std::isspace(line[0]) || std::isspace(line[line.size() - 1]))
-				throw std::runtime_error("Error: bad input (found space at first or end) => " + line);
+				throw std::runtime_error("Error: Invalid format. Expected format: [date␣|␣value] => " + line);
 			isValidDate(line);
 			calculateCurrency(line, this->database);
 		}
