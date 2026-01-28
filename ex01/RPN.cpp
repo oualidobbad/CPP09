@@ -41,7 +41,7 @@ void RPN::parse_calculate(String line)
 	}
 	Calculate();
 }
-static int helperCalcule(char c, int &a, int &b)
+static int CalculateOperation(char c, int &a, int &b)
 {
 	switch (c)
 	{
@@ -72,11 +72,11 @@ static bool isNumber(String str)
 
 void RPN::Calculate()
 {
-	StackInt stack;
+	Stack<int> stack;
+	String tok;
+	int result;
 	int a;
 	int b;
-	int result;
-	String tok;
 
 	while (!tokens.empty())
 	{
@@ -94,7 +94,7 @@ void RPN::Calculate()
 			stack.pop();
 			a = stack.top();
 			stack.pop();
-			result = helperCalcule(tok[0], a, b);
+			result = CalculateOperation(tok[0], a, b);
 			stack.push(result);
 		}
 	}
