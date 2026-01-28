@@ -1,26 +1,28 @@
 #pragma once
 
 #include <iostream>
-#include <vector>
+#include <queue>
+#include <stack>
 
 typedef std::string String;
+typedef std::stack<int> StackInt;
 
 template <typename T>
-struct Vector : public std::vector<T>{};
+struct Queue : public std::queue<T>
+{
+};
 
 class RPN
 {
-	private:
-		Vector<String> tokens;
-		void checkAndCalculate();
+private:
+	Queue<String> tokens;
+	void Calculate();
+	bool isOperator(char c);
 
-	public:
-		RPN();
-		RPN(const RPN& other);
-		RPN& operator=(const RPN& other);
-		~RPN();
-		void tokenizing(String arg);
-		void print();
+public:
+	RPN();
+	RPN(const RPN &other);
+	RPN &operator=(const RPN &other);
+	~RPN();
+	void parse_calculate(String arg);
 };
-
-
