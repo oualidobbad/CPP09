@@ -57,8 +57,6 @@ static int CalculateOperation(char c, int &a, int &b)
 		return 0;
 	}
 }
-// 1 + 2
-// 1 2 +
 
 static bool isNumber(String str)
 {
@@ -84,7 +82,7 @@ void RPN::Calculate()
 		tokens.pop();
 
 		if (isNumber(tok))
-			stack.push(std::strtol(tok.c_str(), NULL, 10));
+			stack.push(strtol(tok.c_str(), NULL, 10));
 		else if (isOperator(tok[0]))
 		{
 			if (stack.size() < 2)
