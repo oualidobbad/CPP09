@@ -62,57 +62,6 @@ double getTime()
 	return time.tv_sec * 1000000.0 + time.tv_usec;
 }
 
-void swapNb(int &a, int &b)
-{
-	if (a < b)
-	{
-		int tmp = a;
-		a = b;
-		b = tmp;
-	}
-}
-
-void insertionSortVector(std::vector<std::pair<int, int> > &pairs)
-{
-	std::pair<int, int> key;
-	size_t i;
-	ssize_t j;
-
-	for (i = 1; i < pairs.size(); i++)
-	{
-		key = pairs[i];
-		for (j = i - 1; j >= 0 && key.first < pairs[j].first; j--)
-			pairs[j + 1] = pairs[j];
-		pairs[j + 1] = key;
-	}
-}
-
-void insertionSortDeque(std::deque<std::pair<int, int> > &pairs)
-{
-	std::pair<int, int> key;
-	size_t i;
-	ssize_t j;
-
-	for (i = 1; i < pairs.size(); i++)
-	{
-		key = pairs[i];
-		for (j = i - 1; j >= 0 && key.first < pairs[j].first; j--)
-			pairs[j + 1] = pairs[j];
-		pairs[j + 1] = key;
-	}
-}
-
-void PmergeMe::sortingInDeque()
-{
-	double start;
-	std::list<int>::iterator it;
-
-	start = getTime();
-	for (it = this->numbersConverted.begin(); it != numbersConverted.end(); it++)
-		this->deque_nb.push_back(*it);
-	pairSortElementDeque();
-	this->timeOfDeque = getTime() - start;
-}
 
 void PmergeMe::sortingInVector()
 {
@@ -126,23 +75,35 @@ void PmergeMe::sortingInVector()
 	this->timeOfVector = getTime() - start;
 }
 
+std::vector<std::pair<int, int> > fordJhonson(std::vector<std::pair<int, int> > pairs)
+{	std::vector<std::pair<std::pair<int, int>, std::pair<int, int> > > MetaPair;
+
+	if (pairs.size() <= 1)
+		return pairs;
+	
+}
+
 void PmergeMe::pairSortElementVector()
 {
 	std::vector<std::pair<int, int> > pairs;
-	size_t i;
+	std::vector<int> lowest;
+	std::vector<int> largest;
+	std::vector<int>::iterator it;
 
-	// std::cout << "============= VECTOR =============\n";
-	for (i = 0; i + 1 < vector_nb.size(); i += 2)
+
+	std::cout << "============= VECTOR =============\n";
+	for (it = vector_nb.begin(); it + 1 < vector_nb.end(); it += 2)
 	{
-		swapNb(vector_nb[i], vector_nb[i + 1]);
-		pairs.push_back(std::make_pair(vector_nb[i], vector_nb[i + 1]));
+		if (*it < *(it + 1))
+			std::swap(*it, *(it + 1));
+		pairs.push_back(std::make_pair(*it, *(it+1)));
 	}
-	if (i < vector_nb.size())
-	{
-		struggle = vector_nb[i];
-	}
-	insertionSortVector(pairs);
-	// for (i = 0; i < pairs.size(); i++)
+
+	if (vector_nb.size() % 2)
+		struggle = *(vector_nb.end() - 1);
+	sort(pairs.begin(), pairs.end());
+	
+	// for (size_t i = 0; i < pairs.size(); i++)
 	// {
 	// 	std::cout << "[" << pairs[i].first << "," << pairs[i].second << "] ";
 	// }
@@ -150,26 +111,37 @@ void PmergeMe::pairSortElementVector()
 	// std::cout << std::endl;
 }
 
-void PmergeMe::pairSortElementDeque()
-{
-	std::deque<std::pair<int, int> > pairs;
-	size_t i;
+// void PmergeMe::sortingInDeque()
+// {
+// 	double start;
+// 	std::list<int>::iterator it;
 
-	// std::cout << "============= DEQUE =============\n";
-	for (i = 0; i + 1 < deque_nb.size(); i += 2)
-	{
-		swapNb(deque_nb[i], deque_nb[i + 1]);
-		pairs.push_back(std::make_pair(deque_nb[i], deque_nb[i + 1]));
-	}
-	if (i < deque_nb.size())
-	{
-		struggle = deque_nb[i];
-	}
-	insertionSortDeque(pairs);
-	// for (i = 0; i < pairs.size(); i++)
-	// {
-	// 	std::cout << "[" << pairs[i].first << "," << pairs[i].second << "] ";
-	// }
-	// std::cout << "[" << struggle << "]";
-	// std::cout << std::endl;
-}
+// 	start = getTime();
+// 	for (it = this->numbersConverted.begin(); it != numbersConverted.end(); it++)
+// 		this->deque_nb.push_back(*it);
+// 	pairSortElementDeque();
+// 	this->timeOfDeque = getTime() - start;
+// }
+
+// void PmergeMe::pairSortElementDeque()
+// {
+// 	std::deque<std::pair<int, int> > pairs;
+// 	std::deque<int>::iterator it;
+
+// 	std::cout << "============= DEQUE =============\n";
+// 	for (it = deque_nb.begin(); it + 1 < deque_nb.end(); it += 2)
+// 	{
+// 		sort(it , it + 2, std::greater<int>());
+// 		pairs.push_back(std::make_pair(*it, *(it + 1)));
+// 	}
+// 	if (deque_nb.size() % 2)
+// 		struggle = *(deque_nb.end() - 1);
+
+// 	sort(pairs.begin(), pairs.end());
+// 	// for (size_t i = 0; i < pairs.size(); i++)
+// 	// {
+// 	// 	std::cout << "[" << pairs[i].first << "," << pairs[i].second << "] ";
+// 	// }
+// 	// std::cout << "[" << struggle << "]";
+// 	// std::cout << std::endl;
+// }

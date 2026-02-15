@@ -9,8 +9,8 @@ int main(int ac, char *argv[])
 		PmergeMe merge;
 
 		merge.IsvalideArgs(argv, ac);
-		merge.sortingInDeque();
 		merge.sortingInVector();
+		// merge.sortingInDeque();
 		merge.print();
 	}
 	catch (const std::exception &e)

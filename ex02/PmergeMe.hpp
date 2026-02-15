@@ -1,6 +1,7 @@
 #pragma once
 #include <bits/stdc++.h>
 #include <sys/time.h>
+#include <algorithm>
 
 typedef std::string String;
 
