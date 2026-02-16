@@ -16,8 +16,8 @@ private:
 	std::deque<int> deque_nb;
 	std::list<int> numbersConverted;
 
-	void pairSortElementVector();
-	void pairSortElementDeque();
+	void applyFordJhonsonVec();
+	void applyFordJhonsonDeq();
 
 public:
 	PmergeMe();
@@ -27,5 +27,7 @@ public:
 	void IsvalideArgs(char **argv, int ac);
 	void sortingInDeque();
 	void sortingInVector();
+	void FordJhonsonVector(std::vector<int> &lowest, std::vector<int> &largest);
+	void FordJhonsonDeque(std::deque<int> &lowest, std::deque<int> &largest);
 	void print();
 };

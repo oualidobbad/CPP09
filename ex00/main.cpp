@@ -9,7 +9,7 @@ bool isValidArgc(int &ac)
 	}
 	if(ac == 1)
 	{ 
-		std::cerr << "Error: could not open file.\n";
+		std::cerr << "Error: file input Not Found.\n";
 		return false; 
 	}
 	return true; 

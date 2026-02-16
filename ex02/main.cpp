@@ -10,7 +10,7 @@ int main(int ac, char *argv[])
 
 		merge.IsvalideArgs(argv, ac);
 		merge.sortingInVector();
-		// merge.sortingInDeque();
+		merge.sortingInDeque();
 		merge.print();
 	}
 	catch (const std::exception &e)
