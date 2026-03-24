@@ -1,22 +1,13 @@
-# CPP09
+    # CPP09
 
-## Description
-C++ module focusing on STL-style algorithms and containers.
+    C++ Module 09: STL-style algorithms/containers with parsing-driven exercises (BitcoinExchange, RPN, PmergeMe).
 
-## Features
-- BitcoinExchange, RPN, and PmergeMe exercises.
+    ## Topics
+    - Parsing and validating inputs; using STL containers/algorithms.
+    - RPN calculator, merge-insert sorting for performance, BTC price lookup by date.
 
-## Technologies Used
-- C++98, STL, Makefile.
+    ## Build & Run
+    - `make` per exercise; run binaries with the required input files/args (e.g., `./RPN "3 4 +"`).
 
-## Installation
-- Run `make` per exercise or root.
-
-## Usage
-- Execute each program with its expected input file or args.
-
-## Example
-- `./RPN "3 4 +"` evaluates the expression.
-
-## Author
-- Oualid Obbad (@oualidobbad)
+    ## Author
+    Oualid Obbad (@oualidobbad)
